@@ -45,7 +45,7 @@
     mode: 0644
   with_dict: "{{ systemd_conf_service }}"
   notify:
-    - daemon reload
+    - daemon-reload
 
 - name: copy .timer profiles
   template:
@@ -54,6 +54,6 @@
     mode: 0644
     with_dict: "{{ systemd_conf_timer }}"
   notify:
-    - daemon reload
+    - daemon-reload
 
 # vim: set ts=2 sw=2:
