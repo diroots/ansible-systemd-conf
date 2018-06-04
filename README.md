@@ -98,12 +98,12 @@ systemd_conf:
 ```yaml
 systemd_conf_service:
     iwd:
-    - Unit
+    - Unit:
       - Description: "Wireless Service"
-    - Service
+    - Service:
       - ExecStart: "/usr/lib/iwd/iwd"
       - LimitNPROC: "1"
-    - Install
+    - Install:
       - WantedBy: "multi-user.target"
 ```
 
@@ -111,13 +111,13 @@ systemd_conf_service:
 ```yaml
 systemd_conf_timer:
     knock:
-    - Unit
+    - Unit:
       - Description: "Run knock.service on boot"
-    - Timer
+    - Timer:
       - OnActiveSec: "0"
       - OnUnitActiveSec: "11h"
       - Unit: "knock.service"
-    - Install
+    - Install:
       - WantedBy: "timers.target"
 ```
 
