@@ -23,6 +23,7 @@
     dest: "/etc/systemd/network/{{ item.key }}.netdev"
     mode: 0644
   with_dict: "{{ systemd_conf_netdev }}"
+  notify:
     - restart systemd-networkd
 
 - name: copy .network profiles
@@ -31,6 +32,7 @@
     dest: "/etc/systemd/network/{{ item.key }}.network"
     mode: 0644
   with_dict: "{{ systemd_conf_network }}"
+  notify:
     - restart systemd-networkd
 
 - name: copy .conf profiles
