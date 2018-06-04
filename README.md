@@ -1,32 +1,29 @@
-Ansible Role: systemd-networkd
+Ansible Role: systemd-conf
 ==============================
 
-Ansible role to configure systemd-networkd profiles.
+Ansible role to configure systemd-networkd profiles, systemd config
+files, systemd timers and systemd service files. This Project is a fork
+of ansible-systemd-networkd of Anthony Ruhier. Thanks to Anthony for the
+good work with the template
 
 Role Variables
 --------------
 
 ```yaml
-# link profiles
-systemd_networkd_link: {}
+---
 
-# netdev profiles
-systemd_networkd_netdev: {}
-
-# network profiles
-systemd_networkd_network: {}
-
-# does the role have to restart systemd-networkd to apply the new profiles ?
-systemd_networkd_apply_config: false
-
-# enable or not systemd_resolved
-systemd_networkd_enable_resolved: true
+systemd_conf: {}
+systemd_conf_link: {}
+systemd_conf_netdev: {}
+systemd_conf_network: {}
+systemd_conf_service: {}
+systemd_conf_timer: {}
 ```
 
 Dependencies
 ------------
 
-None
+Systemd
 
 Example Playbook
 -------------------------
@@ -34,7 +31,7 @@ Example Playbook
 1) Configure a network profile
 
 ```yaml
-systemd_networkd_network:
+systemd_conf_network:
   eth0:
     - Match:
       - Name: "eth0"
@@ -56,8 +53,8 @@ systemd_networkd_network:
 It will create a `eth0.network` profile in `/etc/systemd/network/`, and enable
 `systemd-networkd` and `systemd-resolved`.
 
-Every key under `systemd_networkd_*` corresponds to the profile name to create
-(`.network` in `systemd_networkd_network`, `.link` in systemd_networkd_link,
+Every key under `systemd_conf_*` corresponds to the profile name to create
+(`.network` in `systemd_conf_network`, `.link` in systemd_conf_link,
 etc…). Then every key under the profile name is a section documented in
 systemd-networkd, which contains the couples of `option: value` for your
 profile. Each couple is then converted to the format `option=value`.
@@ -65,7 +62,7 @@ profile. Each couple is then converted to the format `option=value`.
 2) Configure a bonding interface
 
 ```yaml
-systemd_networkd_netdev:
+systemd_conf_netdev:
   bond0:
     - NetDev:
       - Name: "bond0"
@@ -74,7 +71,7 @@ systemd_networkd_netdev:
       - Mode: "802.3ad"
       - LACPTransmitRate: "fast"
 
-systemd_networkd_network:
+systemd_conf_network:
   bond0:
     - Match:
       - Name: "eth*"
@@ -85,6 +82,45 @@ systemd_networkd_network:
 
 What will create an LACP bond interface `bond0`, containing all interfaces
 starting by `eth`.
+
+3) Configure a general config file like `/etc/systemd/resolved.conf`
+```yaml
+systemd_conf:
+  resolved:
+    - Resolved:
+      - DNS: "8.8.8.8,8.8.8.4.4"
+      - FallbackDNS: "1.1.1.1"
+      - Domains: "myDomain"
+      - DNSSEC: "yes"
+```
+
+4) Configure a systemd service
+```yaml
+systemd_conf_service:
+    iwd:
+    - Unit
+      - Description: "Wireless Service"
+    - Service
+      - ExecStart: "/usr/lib/iwd/iwd"
+      - LimitNPROC: "1"
+    - Install
+      - WantedBy: "multi-user.target"
+```
+
+5) Configure a systemd timer
+```yaml
+systemd_conf_timer:
+    knock:
+    - Unit
+      - Description: "Run knock.service on boot"
+    - Timer
+      - OnActiveSec: "0"
+      - OnUnitActiveSec: "11h"
+      - Unit: "knock.service"
+    - Install
+      - WantedBy: "timers.target"
+```
+
 
 License
 -------
