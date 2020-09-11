@@ -8,8 +8,10 @@
   template:
     src: "systemd_conf.j2"
     dest: "/etc/systemd/network/{{ item.key }}.link"
+    owner: root
+    group: systemd-network
     mode: 0644
-  with_dict: "{{ systemd_conf_link }}"
+  loop: "{{ systemd_conf_link | dict2items }}"
   notify:
     - restart systemd-networkd
 
@@ -17,8 +19,10 @@
   template:
     src: "systemd_conf.j2"
     dest: "/etc/systemd/network/{{ item.key }}.netdev"
+    owner: root
+    group: systemd-network
     mode: 0644
-  with_dict: "{{ systemd_conf_netdev }}"
+  loop: "{{ systemd_conf_netdev | dict2items }}"
   notify:
     - restart systemd-networkd
 
@@ -26,8 +30,10 @@
   template:
     src: "systemd_conf.j2"
     dest: "/etc/systemd/network/{{ item.key }}.network"
+    owner: root
+    group: systemd-network
     mode: 0644
-  with_dict: "{{ systemd_conf_network }}"
+  loop: "{{ systemd_conf_network | dict2items }}"
   notify:
     - restart systemd-networkd
 
@@ -36,14 +42,14 @@
     src: "systemd_conf.j2"
     dest: "/etc/systemd/{{ item.key }}.conf"
     mode: 0644
-  with_dict: "{{ systemd_conf }}"
+  loop: "{{ systemd_conf | dict2items }}"
 
 - name: copy .service profiles
   template:
     src: "systemd_conf.j2"
     dest: "/etc/systemd/system/{{ item.key }}.service"
     mode: 0644
-  with_dict: "{{ systemd_conf_service }}"
+  loop: "{{ systemd_conf_service | dict2items }}"
   notify:
     - daemon-reload
 
@@ -52,7 +58,7 @@
     src: "systemd_conf.j2"
     dest: "/etc/systemd/system/{{ item.key }}.timer"
     mode: 0644
-  with_dict: "{{ systemd_conf_timer }}"
+  loop: "{{ systemd_conf_timer | dict2items }}"
   notify:
     - daemon-reload
 
