@@ -122,7 +122,7 @@ systemd_conf_timer:
       - WantedBy: "timers.target"
 ```
 
-5) Configure a systemd path
+6) Configure a systemd path
 ```yaml
 systemd_conf_path:
     passwd-mon:
